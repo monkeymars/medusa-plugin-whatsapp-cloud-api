@@ -15,7 +15,7 @@
     "medusa-interfaces": "^1.3.0",
     "typeorm": "^0.2.36"
   },
-  "repository": "https://github.com/medusajs/medusa-starter-default.git",
+  "repository": "https://github.com/monkeymars/medusa-plugin-whatsapp-cloud-api.git",
   "keywords": [
     "medusa-plugin",
     "WhatsApp",
