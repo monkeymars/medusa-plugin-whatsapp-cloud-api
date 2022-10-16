@@ -26,6 +26,7 @@ class WhatsAppCloudAPI extends BaseService {
     this.accessToken = accessToken;
     this.graphAPIVersion = graphAPIVersion;
     this.senderPhoneNumberId = senderPhoneNumberId;
+    this.baseUrl = `https://graph.facebook.com/${this.graphAPIVersion}/${this.senderPhoneNumberId}`;
     this.WABA_ID = WABA_ID;
 
     if (!this.accessToken) {
@@ -126,6 +127,7 @@ class WhatsAppCloudAPI extends BaseService {
         throw new Error('"recipientPhone" is required in making a request');
       }
     };
+
     this._mustHaveMessage = (message) => {
       if (!message) {
         throw new Error('"message" is required in making a request');
@@ -133,17 +135,18 @@ class WhatsAppCloudAPI extends BaseService {
     };
   }
 
-  async sendText({ message, recipientPhone }) {
+  async sendMessage({ recipientPhone, templateId, lang }) {
     this._mustHaveRecipient(recipientPhone);
-    this._mustHaveMessage(message);
 
     let body = {
       messaging_product: "whatsapp",
       to: recipientPhone,
-      type: "text",
-      text: {
-        preview_url: false,
-        body: message,
+      type: "template",
+      template: {
+        name: templateId,
+        language: {
+          code: lang,
+        },
       },
     };
 
@@ -155,8 +158,6 @@ class WhatsAppCloudAPI extends BaseService {
 
     return response;
   }
-
-  async sendTemplateMessage({ message, templateId, recipientPhone }) {}
 }
 
 export default WhatsAppCloudAPI;
