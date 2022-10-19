@@ -14,12 +14,7 @@ class WhatsAppCloudAPI extends BaseService {
 
   constructor(
     {},
-    {
-      accessToken,
-      graphAPIVersion,
-      senderPhoneNumberId,
-      WABA_ID, //
-    }
+    { accessToken, graphAPIVersion, senderPhoneNumberId, WABA_ID }
   ) {
     super();
 
