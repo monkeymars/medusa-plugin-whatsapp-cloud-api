@@ -5,6 +5,7 @@ WhatsApp Cloud API / Messaging plugin.
 Learn more about how you can use this plugin in the [documentaion](https://docs.medusajs.com/advanced/backend/plugins/overview/).
 
 [![Build & Test](https://github.com/monkeymars/medusa-plugin-whatsapp-cloud-api/actions/workflows/node-ci.yml/badge.svg?branch=main)](https://github.com/monkeymars/medusa-plugin-whatsapp-cloud-api/actions/workflows/node-ci.yml)
+[![npm publish](https://github.com/monkeymars/medusa-plugin-whatsapp-cloud-api/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/monkeymars/medusa-plugin-whatsapp-cloud-api/actions/workflows/npm-publish.yml)
 
 ## Install Plugin
 
