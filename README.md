@@ -2,7 +2,9 @@
 
 WhatsApp Cloud API / Messaging plugin.
 
-Learn more about how you can use this plugin in the [use plugin documentaion](https://docs.medusajs.com/advanced/backend/plugins/overview/).
+Learn more about how you can use this plugin in the [documentaion](https://docs.medusajs.com/advanced/backend/plugins/overview/).
+
+
 
 ## Install Plugin
 
