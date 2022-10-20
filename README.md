@@ -8,6 +8,7 @@ Learn more about how you can use this plugin in the [documentaion](https://docs.
 [![npm publish](https://github.com/monkeymars/medusa-plugin-whatsapp-cloud-api/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/monkeymars/medusa-plugin-whatsapp-cloud-api/actions/workflows/npm-publish.yml)
 <img alt="npm" src="https://img.shields.io/npm/dw/medusa-plugin-whatsapp-cloud-api">
 <img alt="NPM" src="https://img.shields.io/npm/l/medusa-plugin-whatsapp-cloud-api">
+<img alt="npm" src="https://img.shields.io/npm/v/medusa-plugin-whatsapp-cloud-api">
 
 ## Install Plugin
 
