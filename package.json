@@ -1,6 +1,6 @@
 {
   "name": "medusa-plugin-whatsapp-cloud-api",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Medusa plugin to integrates WhatsApp Cloud API",
   "author": "Gery Wibowo <monk3y.mars@gmail.com>",
   "contributors": [],
