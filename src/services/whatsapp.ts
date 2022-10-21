@@ -2,15 +2,20 @@ import { BaseService } from "medusa-interfaces";
 import signale from "signale";
 import unirest from "unirest";
 
+const MESSAGE_TYPE_TEMPLATE = "template";
+const COMPONENT_TYPE_HEADER = "header";
+const COMPONENT_TYPE_BODY = "body";
+const MESSAGING_PRODUCT = "whatsapp";
+
 class WhatsAppCloudAPI extends BaseService {
   protected accessToken: string;
   protected graphAPIVersion: string;
   protected senderPhoneNumberId: string;
-  protected WABA_ID: string;
-  protected _fetch: any;
   protected baseUrl: string;
-  protected _mustHaveRecipient: any;
-  protected _mustHaveMessage: any;
+  protected WABA_ID: string;
+  protected _fetch: (params: any) => Promise<unknown>;
+  _mustHaveRecipient: (recipientPhone: any) => void;
+  _mustHaveMessage: (message: any) => void;
 
   constructor(
     {},
@@ -130,25 +135,59 @@ class WhatsAppCloudAPI extends BaseService {
     };
   }
 
-  async sendMessage({ recipientPhone, templateId, lang }) {
+  /**
+   * Send text-based message templates
+   *
+   * @param {string} templateName WhatsApp template id.
+   * @param {string} recipientPhone Recipient phone number
+   * @param {[object]} headerMessage Array of parameter objects with the content of the message. https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages#parameter-object
+   * @param {[object]} contentMessage Array of parameter objects with the content of the message. https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages#parameter-object
+   * @param {string} lang The code of the language or locale to use.
+   * @return {object} WhatsApp API response object
+   */
+  async sendMessageTemplate({
+    templateName,
+    recipientPhone,
+    headerMessage,
+    contentMessage,
+    lang = "en_US",
+  }) {
     this._mustHaveRecipient(recipientPhone);
 
-    let body = {
-      messaging_product: "whatsapp",
+    const payload = {
+      messaging_product: MESSAGING_PRODUCT,
       to: recipientPhone,
-      type: "template",
+      type: MESSAGE_TYPE_TEMPLATE,
       template: {
-        name: templateId,
+        name: templateName,
         language: {
           code: lang,
         },
+        components: [
+          ...(headerMessage?.length
+            ? [
+                {
+                  type: COMPONENT_TYPE_HEADER,
+                  parameters: headerMessage,
+                },
+              ]
+            : []),
+          ...(contentMessage?.length
+            ? [
+                {
+                  type: COMPONENT_TYPE_BODY,
+                  parameters: contentMessage,
+                },
+              ]
+            : []),
+        ],
       },
     };
 
-    let response = await this._fetch({
+    const response = await this._fetch({
       url: "/messages",
       method: "POST",
-      body,
+      body: payload,
     });
 
     return response;
