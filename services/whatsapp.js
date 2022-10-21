@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 var _objectDestructuringEmpty2 = _interopRequireDefault(require("@babel/runtime/helpers/objectDestructuringEmpty"));
@@ -21,6 +22,10 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = (0, _getPrototypeOf2["default"])(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = (0, _getPrototypeOf2["default"])(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return (0, _possibleConstructorReturn2["default"])(this, result); }; }
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+var MESSAGE_TYPE_TEMPLATE = "template";
+var COMPONENT_TYPE_HEADER = "header";
+var COMPONENT_TYPE_BODY = "body";
+var MESSAGING_PRODUCT = "whatsapp";
 var WhatsAppCloudAPI = /*#__PURE__*/function (_BaseService) {
   (0, _inherits2["default"])(WhatsAppCloudAPI, _BaseService);
   var _super = _createSuper(WhatsAppCloudAPI);
@@ -121,33 +126,51 @@ var WhatsAppCloudAPI = /*#__PURE__*/function (_BaseService) {
     };
     return _this;
   }
+
+  /**
+   * Send text-based message templates
+   *
+   * @param {string} templateName WhatsApp template id.
+   * @param {string} recipientPhone Recipient phone number
+   * @param {[object]} headerMessage Array of parameter objects with the content of the message. https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages#parameter-object
+   * @param {[object]} contentMessage Array of parameter objects with the content of the message. https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages#parameter-object
+   * @param {string} lang The code of the language or locale to use.
+   * @return {object} WhatsApp API response object
+   */
   (0, _createClass2["default"])(WhatsAppCloudAPI, [{
-    key: "sendMessage",
+    key: "sendMessageTemplate",
     value: function () {
-      var _sendMessage = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(_ref4) {
-        var recipientPhone, templateId, lang, body, response;
+      var _sendMessageTemplate = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(_ref4) {
+        var templateName, recipientPhone, headerMessage, contentMessage, _ref4$lang, lang, payload, response;
         return _regenerator["default"].wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                recipientPhone = _ref4.recipientPhone, templateId = _ref4.templateId, lang = _ref4.lang;
+                templateName = _ref4.templateName, recipientPhone = _ref4.recipientPhone, headerMessage = _ref4.headerMessage, contentMessage = _ref4.contentMessage, _ref4$lang = _ref4.lang, lang = _ref4$lang === void 0 ? "en_US" : _ref4$lang;
                 this._mustHaveRecipient(recipientPhone);
-                body = {
-                  messaging_product: "whatsapp",
+                payload = {
+                  messaging_product: MESSAGING_PRODUCT,
                   to: recipientPhone,
-                  type: "template",
+                  type: MESSAGE_TYPE_TEMPLATE,
                   template: {
-                    name: templateId,
+                    name: templateName,
                     language: {
                       code: lang
-                    }
+                    },
+                    components: [].concat((0, _toConsumableArray2["default"])(headerMessage !== null && headerMessage !== void 0 && headerMessage.length ? [{
+                      type: COMPONENT_TYPE_HEADER,
+                      parameters: headerMessage
+                    }] : []), (0, _toConsumableArray2["default"])(contentMessage !== null && contentMessage !== void 0 && contentMessage.length ? [{
+                      type: COMPONENT_TYPE_BODY,
+                      parameters: contentMessage
+                    }] : []))
                   }
                 };
                 _context.next = 5;
                 return this._fetch({
                   url: "/messages",
                   method: "POST",
-                  body: body
+                  body: payload
                 });
               case 5:
                 response = _context.sent;
@@ -159,10 +182,10 @@ var WhatsAppCloudAPI = /*#__PURE__*/function (_BaseService) {
           }
         }, _callee, this);
       }));
-      function sendMessage(_x) {
-        return _sendMessage.apply(this, arguments);
+      function sendMessageTemplate(_x) {
+        return _sendMessageTemplate.apply(this, arguments);
       }
-      return sendMessage;
+      return sendMessageTemplate;
     }()
   }]);
   return WhatsAppCloudAPI;

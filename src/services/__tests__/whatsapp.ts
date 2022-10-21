@@ -1,6 +1,6 @@
 const WhatsAppServiceMock = jest.fn().mockImplementation(() => {
   return {
-    sendMessage: jest.fn().mockReturnValue(
+    sendMessageTemplate: jest.fn().mockReturnValue(
       Promise.resolve({
         status: "success",
         data: {
@@ -14,13 +14,13 @@ const WhatsAppServiceMock = jest.fn().mockImplementation(() => {
 });
 
 describe("WhatsAppService", () => {
-  describe("sendMessage", () => {
+  describe("sendMessageTemplate", () => {
     let result;
 
     beforeAll(async () => {
       jest.clearAllMocks();
       const whatsappService = new WhatsAppServiceMock();
-      result = await whatsappService.sendMessage();
+      result = await whatsappService.sendMessageTemplate();
     });
 
     it("resolves successfully", () => {

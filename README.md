@@ -31,10 +31,10 @@ const plugins = [
   {
     resolve: `medusa-plugin-whatsapp-cloud-api`,
     options: {
-      accessToken: "<Temporary or permanent access token>", // required
-      graphAPIVersion: "<Graph API Version>", // required
-      senderPhoneNumberId: "<Phone number ID>", // required
-      WABA_ID: "<WhatsApp Business Account ID>", // required
+      graphAPIVersion: "<Graph API Version>",
+      senderPhoneNumberId: "<Phone number ID>",
+      WABA_ID: "<WhatsApp Business Account ID>",
+      accessToken: "<Temporary or permanent access token>",
     },
   },
 ];
@@ -50,9 +50,27 @@ Example:
 router.get("/send-message-sample", async (req, res) => {
   const whatsappService = req.scope.resolve("whatsappService");
 
-  const response = await whatsappService.sendMessage({
+  const response = await whatsappService.sendMessageTemplate({
+    templateId: "flight_confirmation", // your message templates
     recipientPhone: "+6281556750222",
-    templateId: "hello_world",
+    headerMessage: [
+      {
+        type: "image",
+        image: {
+          link: "https://img.freepik.com/premium-vector/modern-realistic-airline-ticket-design-with-flight-time-passenger-name-vector-illustration_123447-8.jpg",
+        },
+      },
+    ],
+    contentMessage: [
+      { type: "text", text: "NYC" },
+      { type: "text", text: "JFK" },
+      {
+        type: "date_time",
+        date_time: {
+          fallback_value: "December 24, 2022",
+        },
+      },
+    ],
     lang: "en_US",
   });
 
@@ -61,3 +79,7 @@ router.get("/send-message-sample", async (req, res) => {
   });
 });
 ```
+
+### Sample Message Screenshot
+
+![sample](https://user-images.githubusercontent.com/2216426/197109119-3ad748b9-803c-45b8-888d-8f5cd8bada06.jpeg)
