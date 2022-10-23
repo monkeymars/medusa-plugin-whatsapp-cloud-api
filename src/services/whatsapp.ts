@@ -2,7 +2,6 @@ import { BaseService } from "medusa-interfaces";
 import signale from "signale";
 import unirest from "unirest";
 
-const MESSAGE_TYPE_TEMPLATE = "template";
 const COMPONENT_TYPE_HEADER = "header";
 const COMPONENT_TYPE_BODY = "body";
 const MESSAGING_PRODUCT = "whatsapp";
@@ -19,6 +18,7 @@ class WhatsAppCloudAPI extends BaseService {
 
   static MESSAGE_TYPE = {
     TEXT: "text",
+    LOCATION: "location",
     TEMPLATE: "template"
   }
 
@@ -154,6 +154,7 @@ class WhatsAppCloudAPI extends BaseService {
     preview_url
   }) {
     this._mustHaveRecipient(recipientPhone);
+    this._mustHaveMessage(contentMessage);
 
     if (preview_url === undefined) {
       const regexUrl = /(http|https):\/\/[a-zA-Z0-9-]+(.[a-zA-Z0-9-]+)*/g;
@@ -171,6 +172,45 @@ class WhatsAppCloudAPI extends BaseService {
         preview_url: preview_url,
         body: contentMessage
       },
+    };
+
+    const response = await this._fetch({
+      url: "/messages",
+      method: "POST",
+      body: payload
+    });
+
+    return response;
+  }
+
+  /**
+   * Send location
+   *
+   * @param {string} latitude latitude location
+   * @param {string} longitude longitude location
+   * @param {string} name name location
+   * @param {string} address address location
+   * @return {object} WhatsApp API response object
+   */
+  async sendLocation({
+    recipientPhone,
+    latitude,
+    longitude,
+    name,
+    address
+  }) {
+    this._mustHaveRecipient(recipientPhone);
+
+    const payload = {
+      messaging_product: MESSAGING_PRODUCT,
+      to: recipientPhone,
+      type: WhatsAppCloudAPI.MESSAGE_TYPE.LOCATION,
+      location: {
+        latitude,
+        longitude,
+        name,
+        address
+      }
     };
 
     const response = await this._fetch({
