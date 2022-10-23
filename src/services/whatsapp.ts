@@ -2,7 +2,6 @@ import { BaseService } from "medusa-interfaces";
 import signale from "signale";
 import unirest from "unirest";
 
-const MESSAGE_TYPE_TEMPLATE = "template";
 const COMPONENT_TYPE_HEADER = "header";
 const COMPONENT_TYPE_BODY = "body";
 const MESSAGING_PRODUCT = "whatsapp";
@@ -17,8 +16,14 @@ class WhatsAppCloudAPI extends BaseService {
   _mustHaveRecipient: (recipientPhone: any) => void;
   _mustHaveMessage: (message: any) => void;
 
+  static MESSAGE_TYPE = {
+    TEXT: "text",
+    LOCATION: "location",
+    TEMPLATE: "template"
+  }
+
   constructor(
-    {},
+    { },
     { accessToken, graphAPIVersion, senderPhoneNumberId, WABA_ID }
   ) {
     super();
@@ -136,6 +141,88 @@ class WhatsAppCloudAPI extends BaseService {
   }
 
   /**
+   * Send text message
+   *
+   * @param {string} recipientPhone Recipient phone number
+   * @param {string} contentMessage Text Message
+   * @param {boolean} preview_url Show preview url from Text Message.
+   * @return {object} WhatsApp API response object
+   */
+  async sendMessage({
+    recipientPhone,
+    contentMessage,
+    preview_url
+  }) {
+    this._mustHaveRecipient(recipientPhone);
+    this._mustHaveMessage(contentMessage);
+
+    if (preview_url === undefined) {
+      const regexUrl = /(http|https):\/\/[a-zA-Z0-9-]+(.[a-zA-Z0-9-]+)*/g;
+      const messageContainUrl = contentMessage.match(regexUrl);
+      if (messageContainUrl) {
+        preview_url = true;
+      }
+    }
+
+    const payload = {
+      messaging_product: MESSAGING_PRODUCT,
+      to: recipientPhone,
+      type: WhatsAppCloudAPI.MESSAGE_TYPE.TEXT,
+      text: {
+        preview_url: preview_url,
+        body: contentMessage
+      },
+    };
+
+    const response = await this._fetch({
+      url: "/messages",
+      method: "POST",
+      body: payload
+    });
+
+    return response;
+  }
+
+  /**
+   * Send location
+   *
+   * @param {string} latitude latitude location
+   * @param {string} longitude longitude location
+   * @param {string} name name location
+   * @param {string} address address location
+   * @return {object} WhatsApp API response object
+   */
+  async sendLocation({
+    recipientPhone,
+    latitude,
+    longitude,
+    name,
+    address
+  }) {
+    this._mustHaveRecipient(recipientPhone);
+
+    const payload = {
+      messaging_product: MESSAGING_PRODUCT,
+      to: recipientPhone,
+      type: WhatsAppCloudAPI.MESSAGE_TYPE.LOCATION,
+      location: {
+        latitude,
+        longitude,
+        name,
+        address
+      }
+    };
+
+    const response = await this._fetch({
+      url: "/messages",
+      method: "POST",
+      body: payload
+    });
+
+    return response;
+  }
+
+  /**
    * Send text-based message templates
    *
    * @param {string} templateName WhatsApp template id.
@@ -157,7 +244,7 @@ class WhatsAppCloudAPI extends BaseService {
     const payload = {
       messaging_product: MESSAGING_PRODUCT,
       to: recipientPhone,
-      type: MESSAGE_TYPE_TEMPLATE,
+      type: WhatsAppCloudAPI.MESSAGE_TYPE.TEMPLATE,
       template: {
         name: templateName,
         language: {
@@ -166,19 +253,19 @@ class WhatsAppCloudAPI extends BaseService {
         components: [
           ...(headerMessage?.length
             ? [
-                {
-                  type: COMPONENT_TYPE_HEADER,
-                  parameters: headerMessage,
-                },
-              ]
+              {
+                type: COMPONENT_TYPE_HEADER,
+                parameters: headerMessage,
+              },
+            ]
             : []),
           ...(contentMessage?.length
             ? [
-                {
-                  type: COMPONENT_TYPE_BODY,
-                  parameters: contentMessage,
-                },
-              ]
+              {
+                type: COMPONENT_TYPE_BODY,
+                parameters: contentMessage,
+              },
+            ]
             : []),
         ],
       },
