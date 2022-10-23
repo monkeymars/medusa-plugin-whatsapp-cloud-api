@@ -27,7 +27,7 @@ yarn add medusa-plugin-whatsapp-cloud-api
 
 ## Options
 Next, you need to add configurations for **medusa-plugin-whatsapp-cloud-api** plugin. 
-In **medusa-config.js** add the following at the end of the plugins array:
+In **medusa-config.js** add the following at the plugins array:
 
 ```js
 const plugins = [
