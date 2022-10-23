@@ -1,6 +1,5 @@
-![medua-logos-cover-template-min](https://user-images.githubusercontent.com/2216426/197403099-3e33dc5d-4986-44e8-9e4b-fcbfa019d75d.jpeg)
-
 ## medusa-plugin-whatsapp-cloud-api
+![medua-logos-cover-template-min](https://user-images.githubusercontent.com/2216426/197403099-3e33dc5d-4986-44e8-9e4b-fcbfa019d75d.jpeg)
 
 WhatsApp Cloud API / Messaging plugin.
 
@@ -99,6 +98,15 @@ whatsappService.sendLocation({
 ## Preview: sendMessageTemplate
 
 ![sample](https://user-images.githubusercontent.com/2216426/197109119-3ad748b9-803c-45b8-888d-8f5cd8bada06.jpeg)
+
+## Participants
+| GitHub | Twitter | Discord |
+| ------------- | ------------- | ------------- |
+| [monkeymars](https://github.com/monkeymars/)  | [@SoekmoWibowo](https://twitter.com/SoekmoWibowo)  | **NaN#5123**
+| [madzarmr](https://github.com/madzarmr/)  | [@madzarmr](https://twitter.com/madzarmr)  | **madzarmr**
+| [putra299](https://github.com/putra299/)  | [@putra29](https://twitter.com/putra29)  | **putra299** 
+| [silogos](https://github.com/silogos/)  | [@AminLogos](https://twitter.com/AminLogos)  | **Geeks#8128** 
+
 
 ## Resources
 
