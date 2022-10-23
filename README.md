@@ -1,4 +1,6 @@
-# medusa-plugin-whatsapp-cloud-api
+![medua-logos-cover-template-min](https://user-images.githubusercontent.com/2216426/197403099-3e33dc5d-4986-44e8-9e4b-fcbfa019d75d.jpeg)
+
+## medusa-plugin-whatsapp-cloud-api
 
 WhatsApp Cloud API / Messaging plugin.
 
@@ -25,16 +27,18 @@ yarn add medusa-plugin-whatsapp-cloud-api
 ```
 
 ## Options
+Next, you need to add configurations for **medusa-plugin-whatsapp-cloud-api** plugin. 
+In **medusa-config.js** add the following at the end of the plugins array:
 
 ```js
 const plugins = [
   {
     resolve: `medusa-plugin-whatsapp-cloud-api`,
     options: {
-      graphAPIVersion: "<Graph API Version>",
-      senderPhoneNumberId: "<Phone number ID>",
-      WABA_ID: "<WhatsApp Business Account ID>",
       accessToken: "<Temporary or permanent access token>",
+      WABA_ID: "<WhatsApp Business Account ID>",
+      senderPhoneNumberId: "<Phone number ID>",
+      graphAPIVersion: "<Graph API Version>",
     },
   },
 ];
@@ -42,9 +46,9 @@ const plugins = [
 
 ## Dynamic usage
 
-You can resolve the WhatsApp service to dynamically send messages via WhatsApp Cloud API.
+You can resolve the WhatsApp service to dynamically send messages via WhatsApp Cloud API. Example:
 
-Example:
+#### sendMessageTemplate
 
 ```js
 router.get("/send-message-sample", async (req, res) => {
@@ -57,7 +61,7 @@ router.get("/send-message-sample", async (req, res) => {
       {
         type: "image",
         image: {
-          link: "https://img.freepik.com/premium-vector/modern-realistic-airline-ticket-design-with-flight-time-passenger-name-vector-illustration_123447-8.jpg",
+          link: "https://<URL>",
         },
       },
     ],
@@ -80,18 +84,25 @@ router.get("/send-message-sample", async (req, res) => {
 });
 ```
 
-### Send Location
+#### sendLocation
 
 ```js
 whatsappService.sendLocation({
+  name: "GBK Stadium",
+  address: "Jl. Pintu Satu Senayan, Gelora, Kota Jakarta Pusat, DKI Jakarta",
   recipientPhone: "+6281556750222",
   latitude: -6.21844,
   longitude: 106.8018,
-  name: "GBK Stadium",
-  address: "Jl. Pintu Satu Senayan, Gelora, Kota Jakarta Pusat, DKI Jakarta",
 });
 ```
 
-## Preview
+## Preview: sendMessageTemplate
 
 ![sample](https://user-images.githubusercontent.com/2216426/197109119-3ad748b9-803c-45b8-888d-8f5cd8bada06.jpeg)
+
+## Resources
+
+- [Overview of plugins in Medusa](https://docs.medusajs.com/advanced/backend/plugins/overview)
+- [Create Message Templates for WhatsApp Business Account](https://business.facebook.com/business/help/2055875911147364?id=2129163877102343)
+- [WhatsApp Cloud API Messages References](https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages)
+- [Create Plugin](https://docs.medusajs.com/advanced/backend/plugins/create)
