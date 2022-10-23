@@ -17,8 +17,13 @@ class WhatsAppCloudAPI extends BaseService {
   _mustHaveRecipient: (recipientPhone: any) => void;
   _mustHaveMessage: (message: any) => void;
 
+  static MESSAGE_TYPE = {
+    TEXT: "text",
+    TEMPLATE: "template"
+  }
+
   constructor(
-    {},
+    { },
     { accessToken, graphAPIVersion, senderPhoneNumberId, WABA_ID }
   ) {
     super();
@@ -136,6 +141,48 @@ class WhatsAppCloudAPI extends BaseService {
   }
 
   /**
+   * Send text message
+   *
+   * @param {string} recipientPhone Recipient phone number
+   * @param {string} contentMessage Text Message
+   * @param {boolean} preview_url Show preview url from Text Message.
+   * @return {object} WhatsApp API response object
+   */
+  async sendMessage({
+    recipientPhone,
+    contentMessage,
+    preview_url
+  }) {
+    this._mustHaveRecipient(recipientPhone);
+
+    if (preview_url === undefined) {
+      const regexUrl = /(http|https):\/\/[a-zA-Z0-9-]+(.[a-zA-Z0-9-]+)*/g;
+      const messageContainUrl = contentMessage.match(regexUrl);
+      if (messageContainUrl) {
+        preview_url = true;
+      }
+    }
+
+    const payload = {
+      messaging_product: MESSAGING_PRODUCT,
+      to: recipientPhone,
+      type: WhatsAppCloudAPI.MESSAGE_TYPE.TEXT,
+      text: {
+        preview_url: preview_url,
+        body: contentMessage
+      },
+    };
+
+    const response = await this._fetch({
+      url: "/messages",
+      method: "POST",
+      body: payload
+    });
+
+    return response;
+  }
+
+  /**
    * Send text-based message templates
    *
    * @param {string} templateName WhatsApp template id.
@@ -157,7 +204,7 @@ class WhatsAppCloudAPI extends BaseService {
     const payload = {
       messaging_product: MESSAGING_PRODUCT,
       to: recipientPhone,
-      type: MESSAGE_TYPE_TEMPLATE,
+      type: WhatsAppCloudAPI.MESSAGE_TYPE.TEMPLATE,
       template: {
         name: templateName,
         language: {
@@ -166,19 +213,19 @@ class WhatsAppCloudAPI extends BaseService {
         components: [
           ...(headerMessage?.length
             ? [
-                {
-                  type: COMPONENT_TYPE_HEADER,
-                  parameters: headerMessage,
-                },
-              ]
+              {
+                type: COMPONENT_TYPE_HEADER,
+                parameters: headerMessage,
+              },
+            ]
             : []),
           ...(contentMessage?.length
             ? [
-                {
-                  type: COMPONENT_TYPE_BODY,
-                  parameters: contentMessage,
-                },
-              ]
+              {
+                type: COMPONENT_TYPE_BODY,
+                parameters: contentMessage,
+              },
+            ]
             : []),
         ],
       },
