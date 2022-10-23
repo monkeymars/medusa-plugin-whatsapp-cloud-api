@@ -1,6 +1,7 @@
 import { BaseService } from "medusa-interfaces";
 import signale from "signale";
 import unirest from "unirest";
+import fs from 'fs'
 
 const COMPONENT_TYPE_HEADER = "header";
 const COMPONENT_TYPE_BODY = "body";
@@ -11,6 +12,7 @@ class WhatsAppCloudAPI extends BaseService {
   protected graphAPIVersion: string;
   protected senderPhoneNumberId: string;
   protected baseUrl: string;
+  protected _uploadMedia: any;
   protected WABA_ID: string;
   protected _fetch: (params: any) => Promise<unknown>;
   _mustHaveRecipient: (recipientPhone: any) => void;
@@ -137,6 +139,45 @@ class WhatsAppCloudAPI extends BaseService {
       if (!message) {
         throw new Error('"message" is required in making a request');
       }
+    };
+
+    this._uploadMedia = async ({ filePath, fileType }) => {
+      return new Promise((resolve, reject) => {
+        unirest(
+            'POST',
+            `https://graph.facebook.com/${this.graphAPIVersion}/${this.senderPhoneNumberId}/media`
+        )
+            .headers({
+              Authorization: `Bearer ${this.accessToken}`,
+            })
+            .field('type', fileType)
+            .field('messaging_product', 'whatsapp')
+            .attach('file', fs.createReadStream(filePath))
+            .end((res) => {
+              if (res.error) {
+                let errorObject = () => {
+                  try {
+                    return res.body?.error || JSON.parse(res.raw_body);
+                  } catch (e) {
+                    return {
+                      error: res.raw_body,
+                    };
+                  }
+                };
+
+                reject({
+                  status: "failed",
+                  ...errorObject(),
+                });
+              } else {
+                let response = JSON.parse(res.raw_body);
+                resolve({
+                  status: 'success',
+                  media_id: response.id,
+                });
+              }
+            });
+      });
     };
   }
 
@@ -278,6 +319,69 @@ class WhatsAppCloudAPI extends BaseService {
     });
 
     return response;
+  }
+
+  /**
+   * Send text message
+   *
+   * @param {string} recipientPhone Recipient phone number
+   * @param {string} caption Text Caption
+   * @param {string} filePath File path from your local directory. For example: "@/local/path/file.jpg".
+   * @param {string} fileName File name
+   * @param {string} fileType Type of media file being uploaded
+   * @param {string} url Url document to send
+   * @return {object} WhatsApp API response object
+   */
+  async sendDocument({ recipientPhone, caption, filePath, fileName, fileType, url }) {
+    this._mustHaveRecipient(recipientPhone);
+    if (filePath && url) {
+      throw new Error(
+          'You can only send a document in your "filePath" or one that is in a publicly available "url". Provide either "filePath" or "url".'
+      );
+    }
+
+    if (!filePath && !url) {
+      throw new Error(
+          'You must send a document in your "filePath" or one that is in a publicly available "url". Provide either "filePath" or "url".'
+      );
+    }
+
+    if(filePath && !fileType){
+      throw new Error(
+          'You must send a document with fileName if your file path is exist'
+      );
+    }
+
+    if (!caption) {
+      throw new Error('"caption" is required when sending a document');
+    }
+
+    let body = {
+      messaging_product: 'whatsapp',
+      recipient_type: 'individual',
+      to: recipientPhone,
+      type: 'document',
+      document: {
+        caption: caption || '',
+        filename: fileName || '',
+      },
+    };
+
+    if (filePath) {
+      let uploadedFile = await this._uploadMedia({
+        filePath,
+        fileType,
+      });
+      body['document']['id'] = uploadedFile.media_id;
+    } else {
+      body['document']['link'] = url;
+    }
+
+    return await this._fetch({
+      url: '/messages',
+      method: 'POST',
+      body,
+    });
   }
 }
 
