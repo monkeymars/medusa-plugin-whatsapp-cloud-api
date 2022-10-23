@@ -80,6 +80,18 @@ router.get("/send-message-sample", async (req, res) => {
 });
 ```
 
-### Sample Message Screenshot
+### Send Location
+
+```js
+whatsappService.sendLocation({
+  recipientPhone: "+6281556750222",
+  latitude: -6.21844,
+  longitude: 106.8018,
+  name: "GBK Stadium",
+  address: "Jl. Pintu Satu Senayan, Gelora, Kota Jakarta Pusat, DKI Jakarta",
+});
+```
+
+## Preview
 
 ![sample](https://user-images.githubusercontent.com/2216426/197109119-3ad748b9-803c-45b8-888d-8f5cd8bada06.jpeg)
