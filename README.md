@@ -1,6 +1,6 @@
 ## medusa-plugin-whatsapp-cloud-api
 
-![medua-logos-cover-template-min](https://user-images.githubusercontent.com/2216426/197403099-3e33dc5d-4986-44e8-9e4b-fcbfa019d75d.jpeg)
+![dots-cover-template-min](https://user-images.githubusercontent.com/2216426/198864470-a145383d-1b29-454f-bd3d-11191977b270.jpeg)
 
 WhatsApp Cloud API / Messaging plugin.
 
